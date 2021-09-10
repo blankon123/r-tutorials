@@ -1,0 +1,15 @@
+,ID
+title,Song’s Title
+artist,Song’s Artist
+top genre,Genre of the track
+year,Song’s year in billboard
+bpm,Beats.Per.Minute - The tempo of the song.
+nrgy,"Energy- The energy of a song - the higher the value, the more energtic. song"
+dnce,"Danceability - The higher the value, the easier it is to dance to this song."
+dB,"Loudness..dB.. - The higher the value, the louder the song"
+live,"Liveness - The higher the value, the more likely the song is a live recording"
+val,"Valence - The higher the value, the more positive mood for the song."
+dur,Length - The duration of the song.
+acous,Acousticness.. - The higher the value the more acoustic the song is.
+spch,Speechiness - The higher the value the more spoken word the song contains.
+pop,Popularity- The higher the value the more popular the song is.

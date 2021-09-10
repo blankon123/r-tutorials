@@ -34,12 +34,10 @@ pacman::p_load(
 )
 
 # 2. Load Dataset ################################################
-library(datasets)
-
 if (!require("pacman"))
   install.packages("pacman")
 
-pacman::p_load(pacman, rio)
+pacman::p_load(pacman, rio, datasets)
 
 workdir <- "https://raw.githubusercontent.com/blankon123/r-tutorials/main/data-import-example"
 # CSV
