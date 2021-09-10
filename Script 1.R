@@ -28,11 +28,12 @@ typeof(n)
 c <- 'c'
 typeof(c)
 
-c <- 'not a character'
-typeof(c)
+s <- 'not a character'
+typeof(s)
 
 l <- TRUE
 typeof(l)
+(TRUE | TRUE) & !TRUE
 
 
 # 2. Complex Types #############################################
