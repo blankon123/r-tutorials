@@ -99,7 +99,7 @@ mtcars %>%
   arrange(desc(n))
 
 # 10. Exercise ############################################
-df = import('https://raw.githubusercontent.com/blankon123/r-tutorials/main/top10s.csv')
+df = import('https://raw.githubusercontent.com/blankon123/r-tutorials/main/Sesi_1-TGS/top10s.csv')
 View(df)
 
 #1. Find the top 10 energetic song,

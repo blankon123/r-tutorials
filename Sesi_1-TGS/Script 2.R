@@ -39,7 +39,7 @@ if (!require("pacman"))
 
 pacman::p_load(pacman, rio, datasets)
 
-workdir <- "https://raw.githubusercontent.com/blankon123/r-tutorials/main/data-import-example"
+workdir <- "https://raw.githubusercontent.com/blankon123/r-tutorials/main/Sesi_1-TGS/data-import-example"
 # CSV
 rio_csv <- import(paste0(workdir,"/mbb.csv"))
 head(rio_csv)
