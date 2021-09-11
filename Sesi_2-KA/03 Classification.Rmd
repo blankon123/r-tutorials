@@ -1,0 +1,115 @@
+---
+title: "03 Classification"
+output: html_notebook
+---
+
+## Dataset
+```{r}
+library(datasets)
+dset <- iris
+summary(dset)
+
+split <- createDataPartition(y = dset$Species, p = 0.7)
+
+dtrain <- dset[split$Resample1, ]
+xtrain <- dtrain[,colnames(dtrain) != 'Species']
+ytrain <- dtrain[,colnames(dtrain) == 'Species']
+
+dtest  <- dset[-split$Resample1, ]
+xtest <- dset[,colnames(dset) != 'Species']
+ytest <- dset[,colnames(dset) == 'Species']
+
+```
+
+## Logistic Regression
+```{r}
+control <- trainControl(method = 'cv',
+                          number = 10)
+
+logit <- train(x = xtrain, 
+               y = ytrain, 
+               method = 'glmnet',
+               trControl = control,
+               # family = 'binomial',
+               family = 'multinomial',
+               # tuneGrid=expand.grid(alpha= , lambda=),
+               metric = 'Accuracy'
+              )
+
+logit
+
+predictions_logit <- logit %>% predict(xtest)
+
+Metrics::accuracy(ytest, predictions_logit)
+table(ytest, predictions_logit)
+
+```
+## Naive Bayes
+```{r}
+control <- trainControl(method = 'cv',
+                          number = 10)
+
+naive <- train(x = xtrain, 
+               y = ytrain, 
+               method = 'nb',
+               trControl = control,
+               # tuneGrid=expand.grid(fL= , usekernel= , adjust= ),
+               metric = 'Accuracy'
+              )
+
+naive
+
+predictions_naive <- naive %>% predict(xtest)
+
+Metrics::accuracy(ytest, predictions_naive)
+table(ytest, predictions_naive)
+```
+## kNN
+```{r}
+set.seed(400)
+control <- trainControl(method = 'cv',
+                          number = 10)
+
+knn <- train(x = xtrain, 
+               y = ytrain, 
+               method = 'knn',
+               trControl = control,
+               preProcess = c("center","scale"),
+               tuneGrid = expand.grid(k=c(1,2,3,4,5,6,7,8,9,10,15,20)),
+               metric = 'Accuracy'
+              )
+
+#Output of kNN fit
+knn
+
+predictions_knn <- knn %>% predict(xtest)
+
+Metrics::accuracy(ytest, predictions_knn)
+table(ytest, predictions_knn)
+
+```
+## SVM
+
+```{r}
+
+control <- trainControl(method = 'cv',
+                          number = 10)
+
+svm <- train(x = xtrain, 
+               y = ytrain, 
+               method = 'svmRadial',
+               trControl = control,
+               preProcess = c("center","scale"),
+               # tuneGrid = expand.grid(sigma=, C=),
+               metric = 'Accuracy'
+              )
+
+#Output of kNN fit
+svm
+
+predictions_svm <- svm %>% predict(xtest)
+
+Metrics::accuracy(ytest, predictions_svm)
+table(ytest, predictions_svm)
+
+```
