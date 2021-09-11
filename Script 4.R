@@ -8,7 +8,14 @@
 if (!require("pacman"))
   install.packages("pacman")
 
-pacman::p_load(pacman, rio, dplyr, datasets, ggplot2, gridExtra)
+pacman::p_load(pacman,
+               rio,
+               dplyr,
+               datasets,
+               ggplot2,
+               gridExtra,
+               ggthemes,
+               plotly)
 
 
 # 2. View Dataset ################################################
@@ -45,13 +52,11 @@ plot(
 # 4. Plot with Functions ######################################
 plot(cos, 0, 2 * pi)
 plot(exp, 1, 5)
-plot(dnorm,-3,+3)
+plot(dnorm, -3, +3)
 
 # Formula plot with options
 plot(
-  dnorm,
-  -3,
-  +3,
+  dnorm,-3,+3,
   col = "#cc0000",
   lwd = 5,
   main = "Standard Normal Distribution",
@@ -129,19 +134,35 @@ hist(
 par(mfrow = c(1, 1))
 
 # 8. Extra Mile ########################################
-p1 <- ggplot(iris[iris$Species == "setosa",], aes(x = Petal.Width)) +
-  geom_histogram(binwidth = 9, color = "red", fill = "white") +
-  ggtitle("Setosa")
+ggplot(iris, aes(x = Petal.Width)) +
+  geom_histogram(fill = "white",
+                 colour = "black",
+                 bins = 9) +
+  facet_grid(Species ~ .)
 
-p1 <- ggplot(iris[iris$Species == "versicolor",], aes(x = Petal.Width)) +
-  geom_histogram(binwidth = 9, color = "purple", fill = "white") +
-  ggtitle("Versicolor")
+ggplot_examples = ggplot(iris, aes(x = Petal.Width)) +
+  geom_histogram(fill = "white",
+                 colour = "red",
+                 bins = 9) +
+  facet_grid(Species ~ .) +
+  theme_gdocs() +
+  scale_fill_gradient(low = "black", high = "#8de1f0") +
+  labs(title = "Ceritanya Judul")
 
-p1 <- ggplot(iris[iris$Species == "virginica",], aes(x = Petal.Width)) +
-  geom_histogram(binwidth = 9, color = "blue", fill = "white") +
-  ggtitle("Virginica")
+ggplot_examples
 
-grid.arrange(p1, p2, p3, nrow=3)
+ggplotly(ggplot_examples)
+##
+ggplot_examples <-
+  ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +
+  geom_point(aes(color = Species, shape = Species)) +
+  xlab("Sepal Length") +
+  ylab("Sepal Width") +
+  ggtitle("Sepal Length-Width")
+
+ggplot_examples
+
+ggplotly(ggplot_examples)
 
 # 9. Cleaning Up ########################################
 # Clear environment
