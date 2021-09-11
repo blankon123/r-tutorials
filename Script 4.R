@@ -8,7 +8,7 @@
 if (!require("pacman"))
   install.packages("pacman")
 
-pacman::p_load(pacman, rio, dplyr, datasets)
+pacman::p_load(pacman, rio, dplyr, datasets, ggplot2, gridExtra)
 
 
 # 2. View Dataset ################################################
@@ -21,7 +21,7 @@ summary(mtcars)
 plot(mtcars)
 
 # 3. Simple Plot #################################################
-?plot  # Help for plot()
+? plot  # Help for plot()
 
 plot(iris$Species)  # Categorical variable
 plot(iris$Petal.Length)  # Quantitative variable
@@ -30,25 +30,34 @@ plot(iris$Petal.Length, iris$Petal.Width)  # Quant pair
 plot(iris)  # Entire data frame
 
 # Plot with options
-plot(iris$Petal.Length, iris$Petal.Width,
-     col = "#cc0000",  # Hex code for datalab.cc red
-     pch = 19,         # Use solid circles for points
-     main = "Iris: Petal Length vs. Petal Width",
-     xlab = "Petal Length",
-     ylab = "Petal Width")
+plot(
+  iris$Petal.Length,
+  iris$Petal.Width,
+  col = "#cc0000",
+  # Hex code for datalab.cc red
+  pch = 19,
+  # Use solid circles for points
+  main = "Iris: Petal Length vs. Petal Width",
+  xlab = "Petal Length",
+  ylab = "Petal Width"
+)
 
 # 4. Plot with Functions ######################################
-plot(cos, 0, 2*pi)
+plot(cos, 0, 2 * pi)
 plot(exp, 1, 5)
-plot(dnorm, -3, +3)
+plot(dnorm,-3,+3)
 
 # Formula plot with options
-plot(dnorm, -3, +3,
-     col = "#cc0000",
-     lwd = 5,
-     main = "Standard Normal Distribution",
-     xlab = "z-scores",
-     ylab = "Density")
+plot(
+  dnorm,
+  -3,
+  +3,
+  col = "#cc0000",
+  lwd = 5,
+  main = "Standard Normal Distribution",
+  xlab = "z-scores",
+  ylab = "Density"
+)
 
 # 5. Bar Chart ######################################
 barplot(mtcars$cyl)             # Doesn't work
@@ -67,13 +76,19 @@ hist(mtcars$mpg)
 plot(mtcars$wt, mtcars$mpg)
 
 # Add some options
-plot(mtcars$wt, mtcars$mpg,
-     pch = 19,         # Solid circle
-     cex = 1.5,        # Make 150% size
-     col = "#cc0000",  # Red
-     main = "MPG as a Function of Weight of Cars",
-     xlab = "Weight (in 1000 pounds)",
-     ylab = "MPG")
+plot(
+  mtcars$wt,
+  mtcars$mpg,
+  pch = 19,
+  # Solid circle
+  cex = 1.5,
+  # Make 150% size
+  col = "#cc0000",
+  # Red
+  main = "MPG as a Function of Weight of Cars",
+  xlab = "Weight (in 1000 pounds)",
+  ylab = "MPG"
+)
 
 # 7. Histogram Plot ######################################
 hist(iris$Sepal.Length)
@@ -82,31 +97,53 @@ hist(iris$Sepal.Length)
 par(mfrow = c(3, 1))
 
 # Histograms for each species using options
-hist(iris$Petal.Width [iris$Species == "setosa"],
-     xlim = c(0, 3),
-     breaks = 9,
-     main = "Petal Width for Setosa",
-     xlab = "",
-     col = "red")
+hist(
+  iris$Petal.Width [iris$Species == "setosa"],
+  xlim = c(0, 3),
+  breaks = 9,
+  main = "Petal Width for Setosa",
+  xlab = "",
+  col = "red"
+)
 
-hist(iris$Petal.Width [iris$Species == "versicolor"],
-     xlim = c(0, 3),
-     breaks = 9,
-     main = "Petal Width for Versicolor",
-     xlab = "",
-     col = "purple")
+hist(
+  iris$Petal.Width [iris$Species == "versicolor"],
+  xlim = c(0, 3),
+  breaks = 9,
+  main = "Petal Width for Versicolor",
+  xlab = "",
+  col = "purple"
+)
 
-hist(iris$Petal.Width [iris$Species == "virginica"],
-     xlim = c(0, 3),
-     breaks = 9,
-     main = "Petal Width for Virginica",
-     xlab = "",
-     col = "blue")
+hist(
+  iris$Petal.Width [iris$Species == "virginica"],
+  xlim = c(0, 3),
+  breaks = 9,
+  main = "Petal Width for Virginica",
+  xlab = "",
+  col = "blue"
+)
+
 
 # Restore graphic parameter
-par(mfrow=c(1, 1))
+par(mfrow = c(1, 1))
 
-# . Cleaning Up ########################################
+# 8. Extra Mile ########################################
+p1 <- ggplot(iris[iris$Species == "setosa",], aes(x = Petal.Width)) +
+  geom_histogram(binwidth = 9, color = "red", fill = "white") +
+  ggtitle("Setosa")
+
+p1 <- ggplot(iris[iris$Species == "versicolor",], aes(x = Petal.Width)) +
+  geom_histogram(binwidth = 9, color = "purple", fill = "white") +
+  ggtitle("Versicolor")
+
+p1 <- ggplot(iris[iris$Species == "virginica",], aes(x = Petal.Width)) +
+  geom_histogram(binwidth = 9, color = "blue", fill = "white") +
+  ggtitle("Virginica")
+
+grid.arrange(p1, p2, p3, nrow=3)
+
+# 9. Cleaning Up ########################################
 # Clear environment
 rm(list = ls())
 
