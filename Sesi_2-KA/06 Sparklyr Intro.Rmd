@@ -1,0 +1,94 @@
+---
+title: "06 SparkR"
+output: html_notebook
+---
+
+https://spark.rstudio.com/
+
+```{r}
+
+# apt-get install libxml2-dev
+# install.packages("sparklyr")
+
+# .libPaths(c(file.path(Sys.getenv("SPARK_HOME"), "R", "lib"), .libPaths()))
+
+library(sparklyr)
+library(dplyr)
+
+# spark_available_versions()
+# spark_install(version = "3.1")
+
+```
+https://www.youtube.com/watch?v=GtVwHNxXVgQ
+
+Connect/disconnect sparklyr:
+- spark_connect()
+- spark_disconnect()
+
+
+
+Misal kita coba load data flight
+
+```{r}
+
+# install.packages("nycflights13")
+library(nycflights13)
+library(ggplot2)
+
+sc <- spark_connect(master="local")
+flights <- copy_to(sc, flights, "flights")
+airlines <- copy_to(sc, airlines, "airlines")
+dplyr::src_tbls(sc)
+
+```
+dplyr verbs:
+- select()
+- filter()
+- arrange()  
+- mutate()
+- summarize()
+
+select ~ SELECT
+filter ~ WHERE
+arrange ~ ORDER
+summarise ~ aggregators: sum, min, sd, etc.
+mutate ~ operators: +, *, log, etc.
+
+```{r}
+
+c1 <- filter(flights, day == 17, month == 5, carrier %in% c('UA', 'WN', 'AA', 'DL'))
+c2 <- select(c1, year, month, day, carrier, dep_delay, air_time, distance)
+c3 <- arrange(c2, year, month, day, carrier)
+c4 <- mutate(c3, air_time_hours = air_time / 60)
+
+c4
+
+```
+
+```{r}
+
+c4 <- flights %>% 
+  filter(day == 17, month == 5, carrier %in% c('UA', 'WN', 'AA', 'DL')) %>%
+  select(year, month, day, carrier, dep_delay, air_time, distance) %>%
+  arrange(year, month, day, carrier) %>%
+  mutate(c3, air_time_hours = air_time / 60)
+
+```
+
+Grouping
+
+```{r}
+
+c4 %>%
+  group_by(carrier) %>%
+  summarize(count = n(), mean_dep_delay = mean(dep_delay))
+
+```
+
+Memindahkan ke memory olahan 
+
+```{r}
+
+carrierhours <- collect(c4)
+
+```
