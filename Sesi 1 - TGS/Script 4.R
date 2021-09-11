@@ -165,6 +165,9 @@ ggplot_examples
 ggplotly(ggplot_examples)
 
 # 9. Cleaning Up ########################################
+# Restore graphic parameter
+par(mfrow = c(1, 1))
+
 # Clear environment
 rm(list = ls())
 
