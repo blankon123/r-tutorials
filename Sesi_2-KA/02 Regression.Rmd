@@ -1,0 +1,187 @@
+---
+title: "02 Regression"
+author: "Kasiful"
+date: "9/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Download data percobaan
+
+```{r}
+dset <- read.csv('https://raw.githubusercontent.com/rromanss23/Machine_Leaning_Engineer_Udacity_NanoDegree/master/projects/boston_housing/housing.csv')
+dset
+```
+
+Kita akan ambil variabel MEDV sebagai Y dan sisanya sebagai X
+Untuk ujicoba training dan testing, data akan dipisah dan diambil 7/10 sebagai training
+
+Sebelum itu kita perlu import library yang akan digunakan yaitu superml
+
+```{r}
+
+library(caret)
+library(dplyr)
+
+split <- createDataPartition(y = dset$MEDV, p = 0.7)
+
+dtrain <- dset[split$Resample1, ]
+xtrain <- dtrain[,colnames(dtrain) != 'MEDV']
+ytrain <- dtrain[,colnames(dtrain) == 'MEDV']
+
+dtest  <- dset[-split$Resample1, ]
+xtest <- dset[,colnames(dset) != 'MEDV']
+ytest <- dset[,colnames(dset) == 'MEDV']
+
+```
+
+## Ridge Regression
+
+```{r}
+
+# ridge<-train(y = ytrain,
+#                  x = xtrain,
+#                  method = 'glmnet', 
+#                  tuneGrid = expand.grid(alpha = 0, lambda = 1)
+#                ) 
+
+parameters <- c(seq(0.1, 2, by =0.1) ,  seq(2, 5, 0.5) , seq(5, 25, 1))
+
+ridge<-train(y = ytrain,
+                 x = xtrain,
+                 method = 'glmnet', 
+                 tuneGrid = expand.grid(alpha = 0, lambda = parameters),
+                 metric =  "RMSE"
+               ) 
+
+predictions_ridge <- ridge %>% predict(xtest)
+
+RMSE(ytest, predictions_ridge)
+
+```
+
+
+## Lasso
+
+```{r}
+
+parameters <- c(seq(0.1, 2, by =0.1) ,  seq(2, 5, 0.5) , seq(5, 25, 1))
+
+lasso<-train(y = ytrain,
+                 x = xtrain,
+                 method = 'glmnet', 
+                 tuneGrid = expand.grid(alpha = 1, lambda = parameters) ,
+                 metric =  "RMSE"
+               ) 
+
+predictions_lasso <- lasso %>% predict(xtest)
+
+RMSE(ytest, predictions_lasso)
+
+```
+
+
+## K-Nearest Neighbor
+```{r}
+
+set.seed(12345)
+
+control <- trainControl(method='repeatedcv', 
+                        number=10, 
+                        repeats=3)
+
+knn <- train(y = ytrain,
+                 x = xtrain,
+                 method = 'knn',
+                 trControl = control,
+                 preProcess = c("center","scale"), 
+                 tuneGrid = expand.grid(k = c(1,2,3,4,5,6,7,8,9,10,15,20)),
+                 metric = 'RMSE'
+               ) 
+
+#Output of kNN fit
+knn
+
+predictions_knn <- knn %>% predict(xtest)
+
+```
+## Random Forest 
+```{r}
+
+set.seed(12345)
+
+control <- trainControl(method='repeatedcv', 
+                        number=10, 
+                        repeats=3)
+
+rf <- train(y = ytrain,
+                 x = xtrain,
+                 method = 'rf',
+                 trControl = control,
+                 # preProcess = c("center","scale"),
+                 tuneGrid = expand.grid(mtry=sqrt(ncol(xtrain))),
+                 metric = 'RMSE'
+               ) 
+
+#Output of kNN fit
+rf
+
+predictions_rf <- rf %>% predict(xtest)
+
+```
+
+## Neural Network
+```{r}
+
+set.seed(12345)
+
+control <- trainControl(
+  method = 'cv', 
+  number = 10, 
+  verboseIter = FALSE
+  )
+
+neural <- train(y = ytrain,
+                 x = xtrain,
+                 method = 'nnet',
+                 trControl = control,
+                 preProcess = c("center","scale"),
+                 tuneGrid = expand.grid(size=c(5,10,20,50), decay=0),
+                 metric = 'RMSE'
+               ) 
+
+#Output of kNN fit
+neural
+
+predictions_rf <- rf %>% predict(xtest)
+```
+
+
+## SVR
+```{r}
+
+install.packages('e1071')
+library(e1071)
+
+svr <- svm(x = xtrain, y = ytrain)
+predictions_svr <- predict(svr, xtest)
+ 
+RMSE(predictions_svr, ytest)
+
+
+dtemp <- cbind(xtrain, ytrain)
+dtemp
+
+# perform a grid search
+tuneResult <- tune.svm(
+  x=xtrain,
+  y=ytrain,
+  ranges = list(epsilon = seq(0,1,0.1), cost = 2^(2:9))
+)
+print(tuneResult)
+
+
+```
